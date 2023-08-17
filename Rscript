@@ -3,21 +3,24 @@
 library(seqinr)
 library(tidyverse)
 library(pheatmap)
+library(janitor)
+library(ggseqlogo)
 
 # assuming your data frame is named 'key_df' and the key column is named 'key_column'
-key_df <- read_tsv("/peptide.tsv") %>%    # import your peptide.tsv file from FragPipe
+key_df <- read_tsv("/Users/chaves/Documents/Kidney_TMT16plex/Fixed_TMT_3h/peptide.tsv") %>%
     clean_names() %>%
     rename(name = protein)
 
 # read the fasta file and store sequences
-fasta_sequences <- read.fasta("/protein.fas",    # import your protein.fas file from FragPipe
+fasta_sequences <- read.fasta("/Users/chaves/Documents/Kidney_TMT16plex/Fixed_TMT_3h/protein.fas",
     seqtype = "AA",
     as.string = TRUE
 )
 
+# extract names from fasta file
 fasta_names <- sapply(fasta_sequences, attr, "name")
 
-# here is a function to match names and extract sequences
+# function to match names and extract sequences
 matched_sequences <- lapply(key_df$name, function(name) {
     idx <- match(name, fasta_names)
     if (!is.na(idx)) {
@@ -30,7 +33,7 @@ matched_sequences <- lapply(key_df$name, function(name) {
 # add matched sequences to the data frame
 key_df$protein_sequence <- matched_sequences
 
-# match peptide sequence, extract previous 4 amino acids, and add to a new column called previous_4_aa
+# match peptide sequence, extract previous 4 amino acids, and add to new column
 key_df <- key_df %>%
     mutate(previous_4_aa = sapply(1:nrow(.), function(row_idx) {
         peptide <- key_df$peptide[row_idx]
@@ -45,7 +48,7 @@ key_df <- key_df %>%
         }
     }))
 
-# mutate a new column with the previous 4 amino acids plus the original peptide
+# mutate a new column with the previous 4 amino acids and the peptide
 key_df <- key_df %>%
     mutate(fingerprint_protease = paste(previous_4_aa, peptide, sep = "")) %>%
     filter(
@@ -53,31 +56,39 @@ key_df <- key_df %>%
         previous_4_aa != "M"
     )
 
-# remove the rows where the previous 4 amino acids are less than 4
+# remove the rows in which the previous 4 amino acids are less than 4
 key_df <- key_df %>%
     filter(nchar(previous_4_aa) == 4)
 
 # keep the first 8 amino acids of the fingerprint
 key_df$fingerprint_protease <- substr(key_df$fingerprint_protease, 1, 8)
 
-# create a list of sequences
-fingerprint_list <- strsplit(key_df$fingerprint_protease, "")
+view(key_df)
 
+# at this point you should be able to plot the sequence logo of the fingerprint
+ggseqlogo(
+    key_df$fingerprint_protease,
+    method = "bits",
+    seq_type = "AA") +
+    theme_bw()
+
+# create a list of peptide sequences
+fingerprint_list <- strsplit(key_df$fingerprint_protease, "")
+head(fingerprint_list)
+ 
+ # create a matrix with the list of peptide sequences
 mat_aa <- matrix(unlist(fingerprint_list), ncol = 8, byrow = TRUE)
 
-# remove the rows containing "B" or any other unwanted amino acid in the matrix
-# mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
+# remove the rows containing "B" or any other unwanted amino acids in the matrix
+mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
 
-# if for some weird reason your matrix does not contain even number of columns, try the following:
-# mat_aa <- do.call(rbind, mat_aa)
-
-# calculate the frequency of each amino acid in each column
+# calculate the frequency of each amino acid in each column and plot a heatmap
 mat_aa_freq <- apply(mat_aa, 2, function(x) table(x) / length(x)) * 100
 colnames(mat_aa_freq) <- c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")
-# if you have used do.call function, then you need the rownames instead of colnames
-# rownames(mat_aa_freq) <- c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")
 
-# plot the heatmap
+# if for some weird reason you have an uneven number of amino acids in the matrix, you can use this code to add a row of zeros
+# mat_aa_freq <- rbind(mat_aa_freq, rep(0, ncol(mat_aa_freq)))
+
 mat_aa_freq %>%
     pheatmap(
         cluster_rows = FALSE,
