@@ -66,11 +66,16 @@ fingerprint_list <- strsplit(key_df$fingerprint_protease, "")
 mat_aa <- matrix(unlist(fingerprint_list), ncol = 8, byrow = TRUE)
 
 # remove the rows containing "B" or any other unwanted amino acid in the matrix
-mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
+# mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
+
+# if for some weird reason your matrix does not contain even number of columns, try the following:
+# mat_aa <- do.call(rbind, mat_aa)
 
 # calculate the frequency of each amino acid in each column
 mat_aa_freq <- apply(mat_aa, 2, function(x) table(x) / length(x)) * 100
 colnames(mat_aa_freq) <- c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")
+# if you have used do.call function, then you need the rownames instead of colnames
+# rownames(mat_aa_freq) <- c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")
 
 # plot the heatmap
 mat_aa_freq %>%
