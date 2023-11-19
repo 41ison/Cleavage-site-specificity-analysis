@@ -4,7 +4,7 @@
 # 2 - run the sessionInfo() to see the versions of each package used
 # 3 - of course, check the names of your files peptide.tsv and protein.fas. Sometimes people change names
 
-# output of the sessionInfo()
+# output of the sessionInfo() in my workflow
 # other attached packages:
 # [1] ggseqlogo_0.1   janitor_2.2.0   pheatmap_1.0.12 lubridate_1.9.3
 # [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.3     purrr_1.0.2    
@@ -17,8 +17,8 @@ library(pheatmap)
 library(janitor)
 library(ggseqlogo)
 
-# assuming your data frame is named 'key_df' and the key column is named 'key_column'
-key_df <- read_tsv("peptide.tsv") %>%
+# load the peptide file from FragPipe output as peptides_df
+peptides_df <- read_tsv("peptide.tsv") %>%
     clean_names() %>%
     rename(name = protein)
 
@@ -32,7 +32,7 @@ fasta_sequences <- read.fasta("protein.fas",
 fasta_names <- sapply(fasta_sequences, attr, "name")
 
 # function to match names and extract sequences
-matched_sequences <- lapply(key_df$name, function(name) {
+matched_sequences <- lapply(peptides_df$name, function(name) {
     idx <- match(name, fasta_names)
     if (!is.na(idx)) {
         return(as.character(fasta_sequences[[idx]]))
@@ -42,13 +42,13 @@ matched_sequences <- lapply(key_df$name, function(name) {
 })
 
 # add matched sequences to the data frame
-key_df$protein_sequence <- matched_sequences
+peptides_df$protein_sequence <- matched_sequences
 
 # match peptide sequence, extract previous and next 4 amino acids, and add to new columns
-key_df <- key_df %>%
+peptides_df <- peptides_df %>%
     mutate(previous_4_aa = sapply(1:nrow(.), function(row_idx) {
-        peptide <- key_df$peptide[row_idx]
-        protein <- key_df$protein_sequence[row_idx]
+        peptide <- peptides_df$peptide[row_idx]
+        protein <- peptides_df$protein_sequence[row_idx]
         match_idx <- regexpr(peptide, protein)
         if (match_idx > 0) {
             start_idx <- max(match_idx - 4, 1)
@@ -59,8 +59,8 @@ key_df <- key_df %>%
         }
     }),
     next_4_aa = sapply(1:nrow(.), function(row_idx) {
-        peptide <- key_df$peptide[row_idx]
-        protein <- key_df$protein_sequence[row_idx]
+        peptide <- peptides_df$peptide[row_idx]
+        protein <- peptides_df$protein_sequence[row_idx]
         match_idx <- regexpr(peptide, protein)
         if (match_idx > 0) {
             end_idx <- match_idx + attr(match_idx, "match.length")
@@ -72,7 +72,10 @@ key_df <- key_df %>%
     }))
 
 # Add new columns with the previous and the next 4 amino acids + the peptide fragment
-key_df <- key_df %>%
+# hint 1 - if you did your search in MaxQuant you already have this column in your peptide file
+# hint 2 - if you are using the latest version of FragPipe and selecting your peptide sequences from psm.tsv
+# file instead of peptide.tsv file, you already have this column as extended peptide sequence
+peptides_df <- peptides_df %>%
     dplyr::mutate(
         fingerprint_Nterm = paste(previous_4_aa, peptide, sep = ""),
             fingerprint_Cterm = paste(peptide, next_4_aa, sep = "")
@@ -93,11 +96,11 @@ key_df <- key_df %>%
 # if the column next4_aa is of lenght 0, it means that the peptide is at the end of the protein and the next_4_aa are not available.
 # So the peptide is removed from the fingerprint_Cterm column
 
-view(key_df)
+view(peptides_df)
 
 # at this point you should be able to plot the sequence logo of the fingerprint in the N-term
 ggseqlogo(
-    key_df$fingerprint_Nterm,
+    peptides_df$fingerprint_Nterm,
     method = "bits",
     seq_type = "AA") +
     theme_bw() +
@@ -113,7 +116,7 @@ ggseqlogo(
  
 # and the sequence logo of the fingerprint in the C-term
 ggseqlogo(
-    key_df$fingerprint_Cterm %>% na.omit(),
+    peptides_df$fingerprint_Cterm %>% na.omit(),
     method = "bits",
     seq_type = "AA",
     na_col = "grey50") +
@@ -129,7 +132,7 @@ ggseqlogo(
     )
 
 # create a list of peptide sequences including the N-term and C-term fingerprints
-fingerprint_protease <- c(key_df$fingerprint_Nterm, key_df$fingerprint_Cterm) %>% 
+fingerprint_protease <- c(peptides_df$fingerprint_Nterm, peptides_df$fingerprint_Cterm) %>% 
         na.omit() %>%
         strsplit("")
  
@@ -151,7 +154,7 @@ mat_aa_freq <- apply(mat_aa, 2, aa_freq)
 # twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y')
 
 # Function to complete missing amino acids with zero and reorder if necessary
-# You can skip this step if you have a complete matrix
+# you can skip this step if you have a complete matrix
 complete_and_reorder_amino_acids <- function(element) {
 # Complete missing amino acids with zero
   for (amino_acid in twenty_amino_acids) {
