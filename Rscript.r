@@ -17,6 +17,8 @@ library(pheatmap)
 library(janitor)
 library(ggseqlogo)
 
+# replace the comment with your working directory in setwd("")
+# the working directory should be the folder where you have the peptide.tsv and the protein.fas files.
 setwd("/yourWorkingDirectoryHere")
 
 # load the peptide file from FragPipe output as peptides_df
