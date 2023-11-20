@@ -17,6 +17,8 @@ library(pheatmap)
 library(janitor)
 library(ggseqlogo)
 
+setwd("/yourWorkingDirectoryHere")
+
 # load the peptide file from FragPipe output as peptides_df
 peptides_df <- read_tsv("peptide.tsv") %>%
     clean_names() %>%
