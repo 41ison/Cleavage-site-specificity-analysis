@@ -6,7 +6,8 @@ If you have any problems running the code you can check the following:
 2 - run the `sessionInfo()` to see the versions of each package used.
 3 - of course, check the names of your files `peptide.tsv` and `protein.fas`. Sometimes people change names.
 
-# The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm.
+The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm.
+
 ```
 figerprint_df <- peptide_file %>%
     dplyr::mutate(
