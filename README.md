@@ -107,7 +107,9 @@ final_matrix %>%
     )
 dev.off()
 ```
+<p align="center">
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="500">
+</p>
 
 ### Alternatively, you can plot using ggplot2
 
@@ -145,5 +147,6 @@ ggsave("PICS_plot_ggplot.png",
     width = 6, height = 6, bg = "white",
     units = "in", dpi = 300)
 ```
-
+<p align="center">
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
+</p>p
