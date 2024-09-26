@@ -108,7 +108,7 @@ final_matrix %>%
 dev.off()
 ```
 
-![PICS plot using ComplexHeatmap](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png)
+![PICS plot using ComplexHeatmap](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png | width=100)
 
 ### Alternatively, you can plot using ggplot2
 
