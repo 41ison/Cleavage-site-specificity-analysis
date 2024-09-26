@@ -17,6 +17,9 @@ aa_freq <- function(x) {
 
 # to impute missing amino acids with zero and reorder if necessary
 complete_and_reorder_amino_acids <- function(element) {
+# List of 20 amino acids
+twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y')
+
 # Complete missing amino acids with zero
   for (amino_acid in twenty_amino_acids) {
     if (!amino_acid %in% names(element)) {
@@ -62,9 +65,6 @@ mat_aa <- matrix(unlist(fingerprint_protease), ncol = 8, byrow = TRUE)
 
 # remove the rows containing "B" or any other unwanted amino acids in the matrix
 # mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
-
-# List of 20 amino acids
-twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y')
 
 # calculate the frequency of each amino acid in each column and plot a heatmap
 mat_aa_freq <- apply(mat_aa, 2, aa_freq)
