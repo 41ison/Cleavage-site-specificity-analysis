@@ -7,7 +7,18 @@ If you have any problems running the code you can check the following:
 - of course, check the names of your files **peptide.tsv** and **protein.fas**. Sometimes people change names.
 - ⚠️when importing your **psm.tsv** files, make sure you are using the `clean_names()` function from `janitor` package.
 
-### Following you find the functions to help with the analysis
+### Following you find the packages and functions to help with the analysis
+
+R packages you need to have installed and loaded:
+
+```
+library(tidyverse)
+library(here)
+library(janitor)
+library(ComplexHeatmap)
+```
+
+Functions you need to follow the code in this repository:
 
 ```
 # to calculate the frequency of each amino acid in each column in percentage
@@ -37,7 +48,9 @@ twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', '
 The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm. Once you imported the psm.tsv file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore. The following code works well:
 
 ```
-psm_file <- psm_tsv %>%
+
+psm_file <- read_tsv("psm.tsv") %>%
+    clean_names() %>%
     dplyr::mutate(
         fingerprint_Nterm = case_when(
             stringr::str_detect(extended_peptide, "^\\.") ~ "NA",
@@ -80,11 +93,12 @@ row.names(final_matrix) <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "
 Plotting the result and save your heatmap
 
 ```
-PICS_plot <- final_matrix %>%
+png("pics_plot_heatmap.png", width = 6, height = 6, units = "in", res = 300)
+final_matrix %>%
     ComplexHeatmap::pheatmap(
         cluster_rows = FALSE,
         cluster_cols = FALSE,
-        fontsize = 20,
+        fontsize = 10,
         show_rownames = TRUE,
         show_colnames = TRUE,
         color = colorRampPalette(c("grey95", "steelblue"))(20),
@@ -92,14 +106,46 @@ PICS_plot <- final_matrix %>%
         gaps_col = 4,
         angle_col = "0"
     )
-
-ggsave("PICS_plot.png",
-    path = "plots",
-    PICS_plot, width = 8,
-    height = 8, units = "in", dpi = 350)
+dev.off()
 ```
 
-You will find the Rscript for build a matrix of frequency for each amino acid per position.
+![PICS plot using ComplexHeatmap]()
 
-![cleavage](https://github.com/41ison/Cleavage-site-specificity-analysis/assets/108031197/8b08e17d-29b1-4051-83c4-39c9e97cb7ce)
-![seqlogo](https://github.com/41ison/Cleavage-site-specificity-analysis/assets/108031197/0832882a-a29f-41bc-a140-0ce9ee83d11c)
+### Alternatively, you can plot using ggplot2
+
+```
+pics_plot <- final_matrix %>%
+    as.data.frame() %>%
+    rownames_to_column(var = "residue") %>%
+    pivot_longer(cols = -residue, names_to = "position", values_to = "frequency") %>%
+    dplyr::mutate(
+        position = factor(position, c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")),
+        residue = factor(residue, c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"))
+        ) %>%
+    ggplot(aes(x = position, y = residue, fill = frequency)) +
+    geom_tile(color = "black") +
+    scale_fill_gradient(low = "grey90", high = "dodgerblue4") +
+    theme_void() +
+    labs(
+        title = "Cleavage Site Specificity",
+        x = "Position",
+        y = "Amino acid residue",
+        fill = "Frequency (%)"
+    ) +
+    theme(text = element_text(size = 15, color = "black"),
+        axis.text.x = element_text(hjust = 0.5),
+        axis.text.y = element_text(),
+        legend.title = element_text(hjust = 0.5),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.key.width = unit(1.5, "cm"),
+        legend.title.position = "top")
+
+# save the plot
+ggsave("PICS_plot_ggplot.png", 
+    plot = pics_plot, 
+    width = 6, height = 6, bg = "white",
+    units = "in", dpi = 300)
+```
+
+![PICS plot using ggplot2]()
