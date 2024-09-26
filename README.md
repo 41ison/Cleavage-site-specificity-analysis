@@ -149,4 +149,4 @@ ggsave("PICS_plot_ggplot.png",
 ```
 <p align="center">
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
-</p>p
+</p>
