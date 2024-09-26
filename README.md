@@ -107,7 +107,7 @@ final_matrix %>%
     )
 dev.off()
 ```
-<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="300">
+<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="500">
 
 ### Alternatively, you can plot using ggplot2
 
@@ -146,4 +146,4 @@ ggsave("PICS_plot_ggplot.png",
     units = "in", dpi = 300)
 ```
 
-<img src="[https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png)" width="300">
+<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
