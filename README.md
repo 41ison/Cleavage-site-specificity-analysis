@@ -107,7 +107,7 @@ final_matrix %>%
     )
 dev.off()
 ```
-<img src="https://your-image-url.type](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="100">
+<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="100">
 
 ### Alternatively, you can plot using ggplot2
 
