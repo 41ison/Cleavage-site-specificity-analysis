@@ -4,9 +4,8 @@ This is a small code for cleavage site specificity analysis
 
 If you have any problems running the code you can check the following:
 - pay attention to the conflicts between the packages used here and those you have appended.
-- run the `sessionInfo()` to see the versions of each package used.
 - of course, check the names of your files **peptide.tsv** and **protein.fas**. Sometimes people change names.
-- ⚠️when importing your **psm.tsv** files, make sure you are using the 'clean_names()' function from 'janitor' package.
+- ⚠️when importing your **psm.tsv** files, make sure you are using the `clean_names()` function from `janitor` package.
 
 ### Following you find the functions to help with the analysis
 
@@ -16,7 +15,7 @@ aa_freq <- function(x) {
     table(x) / length(x) * 100
 }
 
-# Function to complete missing amino acids with zero and reorder if necessary
+# to impute missing amino acids with zero and reorder if necessary
 complete_and_reorder_amino_acids <- function(element) {
 # Complete missing amino acids with zero
   for (amino_acid in twenty_amino_acids) {
@@ -32,7 +31,7 @@ complete_and_reorder_amino_acids <- function(element) {
 }
 ```
 
-The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm. Once you imported the psm.tsv file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, try the following code:
+The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm. Once you imported the psm.tsv file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore. The following code works well:
 
 ```
 psm_file <- psm_tsv %>%
@@ -54,7 +53,7 @@ Extract the matrix of amino acids and calculate the frequency of each residue in
 
 ```
 # create a list of peptide sequences including the N-term and C-term fingerprints
-fingerprint_protease <- c(psm_combined$fingerprint_Nterm, psm_combined$fingerprint_Cterm) %>% 
+fingerprint_protease <- c(psm_file$fingerprint_Nterm, psm_file$fingerprint_Cterm) %>% 
         na.omit() %>%
         strsplit("")
  
@@ -101,5 +100,6 @@ ggsave("PICS_plot.png",
 ```
 
 You will find the Rscript for build a matrix of frequency for each amino acid per position.
+
 ![cleavage](https://github.com/41ison/Cleavage-site-specificity-analysis/assets/108031197/8b08e17d-29b1-4051-83c4-39c9e97cb7ce)
 ![seqlogo](https://github.com/41ison/Cleavage-site-specificity-analysis/assets/108031197/0832882a-a29f-41bc-a140-0ce9ee83d11c)
