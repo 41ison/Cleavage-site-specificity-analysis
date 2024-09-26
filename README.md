@@ -48,7 +48,6 @@ twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', '
 The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm. Once you imported the psm.tsv file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore. The following code works well:
 
 ```
-
 psm_file <- read_tsv("psm.tsv") %>%
     clean_names() %>%
     dplyr::mutate(
@@ -109,7 +108,7 @@ final_matrix %>%
 dev.off()
 ```
 
-![PICS plot using ComplexHeatmap]()
+![PICS plot using ComplexHeatmap](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png)
 
 ### Alternatively, you can plot using ggplot2
 
@@ -148,4 +147,4 @@ ggsave("PICS_plot_ggplot.png",
     units = "in", dpi = 300)
 ```
 
-![PICS plot using ggplot2]()
+![PICS plot using ggplot2](https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png)
