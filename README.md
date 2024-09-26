@@ -49,10 +49,10 @@ The simplest way to spilt the extended_peptide sequence keeping the 4 amino acid
 
 ```
 psm_file <- read_tsv("psm.tsv") %>%
-    clean_names() %>%
+    janitor::clean_names() %>%
     dplyr::mutate(
         fingerprint_Nterm = case_when(
-            stringr::str_detect(extended_peptide, "^\\.") ~ "NA",
+            str_detect(extended_peptide, "^\\.") ~ "NA",
             TRUE ~ substr(extended_peptide, 2, 16)
             ),
         fingerprint_Cterm = substr(extended_peptide, nchar(extended_peptide) - 15, nchar(extended_peptide) - 2),
@@ -68,15 +68,18 @@ Extract the matrix of amino acids and calculate the frequency of each residue in
 
 ```
 # create a list of peptide sequences including the N-term and C-term fingerprints
-fingerprint_protease <- c(psm_file$fingerprint_Nterm, psm_file$fingerprint_Cterm) %>% 
+fingerprint_protease <- c(psm_file$fingerprint_Nterm,
+            psm_file$fingerprint_Cterm) %>% 
         na.omit() %>%
         strsplit("")
  
 # create a matrix with the list of peptide sequences
-mat_aa <- matrix(unlist(fingerprint_protease), ncol = 8, byrow = TRUE)
+mat_aa <- matrix(unlist(fingerprint_protease),
+                        ncol = 8, byrow = TRUE)
 
 # remove the rows containing "B" or any other unwanted amino acids in the matrix
-# mat_aa <- mat_aa[!apply(mat_aa, 1, function(x) any(x == "B")), ]
+# mat_aa <- mat_aa[!apply(mat_aa, 1,
+                    function(x) any(x == "B")), ]
 
 # calculate the frequency of each amino acid in each column and plot a heatmap
 mat_aa_freq <- apply(mat_aa, 2, aa_freq)
@@ -92,7 +95,9 @@ row.names(final_matrix) <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "
 Plotting the result and save your heatmap
 
 ```
-png("pics_plot_heatmap.png", width = 6, height = 6, units = "in", res = 300)
+png("pics_plot_heatmap.png",
+    width = 6, height = 6,
+    units = "in", res = 300)
 final_matrix %>%
     ComplexHeatmap::pheatmap(
         cluster_rows = FALSE,
@@ -117,7 +122,8 @@ dev.off()
 pics_plot <- final_matrix %>%
     as.data.frame() %>%
     rownames_to_column(var = "residue") %>%
-    pivot_longer(cols = -residue, names_to = "position", values_to = "frequency") %>%
+    pivot_longer(cols = -residue, names_to = "position",
+                    values_to = "frequency") %>%
     dplyr::mutate(
         position = factor(position, c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")),
         residue = factor(residue, c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"))
