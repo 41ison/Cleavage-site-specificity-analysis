@@ -161,9 +161,9 @@ ggsave("PICS_plot_ggplot.png",
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
 </p>
 
-##Making your data more interesting and informative with seqLogos for N-term and C-term
+## Making your data more interesting and informative with seqLogos for N-term and C-term
 
-Additional packages
+Additional packages you will need:
 
 ```
 library(ggseqlogo)    # to create the seqLogos
@@ -219,9 +219,14 @@ Cterm_seqLogo_plot <- psm_file$fingerprint_Cterm %>%
   labs(title = "SeqLogo of the C-terminal fingerprint",
        x = "Amino acid position",
        y = "Bits")
+
+ggsave("Cterm_seqLogo_plot.png", 
+    plot = Cterm_seqLogo_plot, 
+    width = 4, height = 5, bg = "white",
+    units = "in", dpi = 300)
 ```
 
-## Since you are here, you can use the `patchwork` package to merge the figures like this:
+### Since you are here, you can use the `patchwork` package to merge the figures like this:
 
 ```
 panel_plot <- (
