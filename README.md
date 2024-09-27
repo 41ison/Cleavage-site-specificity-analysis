@@ -45,7 +45,11 @@ twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', '
 }
 ```
 
-The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be fingerprint_Nterm and the second fingerprint_Cterm. Once you imported the psm.tsv file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore. The following code works well:
+# FragPipe search results usage
+
+The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be _fingerprint_Nterm_ and the second _fingerprint_Cterm_. Once you imported the **psm.tsv** file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore, because you have the column extended peptide.
+
+❗Remember that the **psm.tsv** file contains all the PSM scored. Only a fraction of these PSM will be transfered to the **peptide.tsv** file. So, you may want to apply a filter in _hyperscore_ column to select the best PSMs.
 
 ```
 psm_file <- read_tsv("psm.tsv") %>%
@@ -155,4 +159,84 @@ ggsave("PICS_plot_ggplot.png",
 ```
 <p align="center">
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
+</p>
+
+##Making your data more interesting and informative with seqLogos for N-term and C-term
+
+Additional packages
+
+```
+library(ggseqlogo)    # to create the seqLogos
+library(patchwork)    # to merge the figures in a nice panel
+```
+
+### Make the seqlogo for the N-term and C-term
+
+```
+Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
+    na.omit() %>%
+    ggseqlogo::ggseqlogo(
+  method = "bits",
+  seq_type = "AA"
+  ) +
+  geom_hline(yintercept = 0, 
+        color = "black", linetype = "dashed") +
+    geom_vline(xintercept = 4.5, 
+        color = "black", linetype = "dashed") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    text = element_text(size = 15, color = "black"),
+    legend.position = "bottom",
+    legend.title.position = "top",
+    legend.title = element_text(size = 12, hjust = 0.5)
+  ) +
+  labs(title = "SeqLogo of the N-terminal fingerprint",
+       x = "Amino acid position",
+       y = "Bits")
+
+ggsave("Nterm_seqLogo_plot.png", 
+    plot = Nterm_seqLogo_plot, 
+    width = 4, height = 5, bg = "white",
+    units = "in", dpi = 300)
+
+Cterm_seqLogo_plot <- psm_file$fingerprint_Cterm %>%
+    na.omit() %>%
+    ggseqlogo::ggseqlogo(
+  method = "bits",
+  seq_type = "AA"
+  ) +
+  geom_hline(yintercept = 0, 
+        color = "black", linetype = "dashed") +
+    geom_vline(xintercept = 4.5, 
+        color = "black", linetype = "dashed") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    text = element_text(size = 15, color = "black"),
+    legend.position = "bottom",
+    legend.title.position = "top",
+    legend.title = element_text(size = 12, hjust = 0.5)
+  ) +
+  labs(title = "SeqLogo of the C-terminal fingerprint",
+       x = "Amino acid position",
+       y = "Bits")
+```
+
+## Since you are here, you can use the `patchwork` package to merge the figures like this:
+
+```
+panel_plot <- (
+    (
+(Nterm_seqLogo_plot | Cterm_seqLogo_plot) + plot_layout(guides = 'collect') & theme(legend.position = "bottom")
+    ) / pics_plot) +
+    plot_annotation(tag_levels = "A", theme = theme(plot.tag = element_text(size = 40, face = "bold"))) +
+    plot_layout(heights = c(1,4))
+
+ggsave("panel_plot.png", 
+        panel_plot, 
+        width = 20, height = 25, 
+        dpi = 300)
+```
+
+<p align="center">
+<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/panel_plot.png" width="500">
 </p>
