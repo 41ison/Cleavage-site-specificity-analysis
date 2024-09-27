@@ -161,7 +161,7 @@ ggsave("PICS_plot_ggplot.png",
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
 </p>
 
-## Making your data more interesting and informative with seqLogos for N-term and C-term
+## Making your data more interesting and informative with seqLogos for N-termini and C-termini
 
 Additional packages you will need:
 
@@ -190,7 +190,7 @@ Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
     legend.title.position = "top",
     legend.title = element_text(size = 12, hjust = 0.5)
   ) +
-  labs(title = "SeqLogo of the N-terminal fingerprint",
+  labs(title = "SeqLogo of the N-termini fingerprint",
        x = "Amino acid position",
        y = "Bits")
 
@@ -216,7 +216,7 @@ Cterm_seqLogo_plot <- psm_file$fingerprint_Cterm %>%
     legend.title.position = "top",
     legend.title = element_text(size = 12, hjust = 0.5)
   ) +
-  labs(title = "SeqLogo of the C-terminal fingerprint",
+  labs(title = "SeqLogo of the C-termini fingerprint",
        x = "Amino acid position",
        y = "Bits")
 
@@ -226,7 +226,9 @@ ggsave("Cterm_seqLogo_plot.png",
     units = "in", dpi = 300)
 ```
 
-### Since you are here, you can use the `patchwork` package to merge the figures like this:
+### Since you are here, you can use the `patchwork` package to merge the figures.
+
+This panel plot will show the N-termini and the C-termini seqlogos separately and the composite of the N- and C-termini as a heatmap.
 
 ```
 panel_plot <- (
@@ -243,5 +245,5 @@ ggsave("panel_plot.png",
 ```
 
 <p align="center">
-<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/panel_plot.png" width="500">
+<img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/panel_plot_fingerprint.png" width="500">
 </p>
