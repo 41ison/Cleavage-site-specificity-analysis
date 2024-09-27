@@ -1,13 +1,12 @@
 # Protease cleavage site specificity analysis - PICS
 
-This is a small code for cleavage site specificity analysis
+This is a small R code for cleavage site specificity analysis
 
 If you have any problems running the code you can check the following:
 - pay attention to the conflicts between the packages used here and those you have appended.
-- of course, check the names of your files **peptide.tsv** and **protein.fas**. Sometimes people change names.
+- of course, check the names of your files **psm.tsv**, **peptide.tsv** and **protein.fas**. Sometimes people change names.
+- never ever overwrite the original tsv files with modifications. Save as a new file instead.
 - ⚠️when importing your **psm.tsv** files, make sure you are using the `clean_names()` function from `janitor` package.
-
-### Following you find the packages and functions to help with the analysis
 
 R packages you need to have installed and loaded:
 
@@ -45,7 +44,7 @@ twenty_amino_acids <- c('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', '
 }
 ```
 
-# FragPipe search results usage
+## FragPipe search results usage
 
 The simplest way to spilt the extended_peptide sequence keeping the 4 amino acids before and after the first and second dot into two separate columns. The first will be _fingerprint_Nterm_ and the second _fingerprint_Cterm_. Once you imported the **psm.tsv** file you can create a fingerprint for the N-term and C-term with 4 amino acids on each side of the cleavage site. If you are using the latest version of **FragPipe**, you don't need to map the peptides to proteins in fasta file anymore, because you have the column extended peptide.
 
@@ -96,7 +95,7 @@ colnames(final_matrix) <- c("P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'")
 row.names(final_matrix) <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y")
 ```
 
-Plotting the result and save your heatmap
+Plotting the result and saving the heatmap. After running the code below, the png file should be saved in your working directory.
 
 ```
 png("pics_plot_heatmap.png",
@@ -120,7 +119,8 @@ dev.off()
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_complexheatmap.png" width="500">
 </p>
 
-### Alternatively, you can plot using ggplot2
+Alternatively, you can plot using ggplot2.
+This gives you more control over the plot. Better for customization.
 
 ```
 pics_plot <- final_matrix %>%
@@ -161,7 +161,7 @@ ggsave("PICS_plot_ggplot.png",
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/PICS_ggplot2.png" width="500">
 </p>
 
-## Making your data more interesting and informative with seqLogos for N-termini and C-termini
+## Making your data more informative with seqLogos for N-termini and C-termini.
 
 Additional packages you will need:
 
@@ -170,7 +170,7 @@ library(ggseqlogo)    # to create the seqLogos
 library(patchwork)    # to merge the figures in a nice panel
 ```
 
-### Make the seqlogo for the N-term and C-term
+Make the seqlogo for the N-termini and C-termini.
 
 ```
 Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
