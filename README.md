@@ -10,7 +10,7 @@ If you have any problems running the code you can check the following:
 
 R packages you need to have installed and loaded:
 
-```
+```r
 library(tidyverse)
 library(here)
 library(janitor)
@@ -19,7 +19,7 @@ library(ComplexHeatmap)
 
 Functions you need to follow the code in this repository:
 
-```
+```r
 # to calculate the frequency of each amino acid in each column in percentage
 aa_freq <- function(x) {
     table(x) / length(x) * 100
@@ -50,7 +50,7 @@ The simplest way to spilt the extended_peptide sequence keeping the 4 amino acid
 
 ❗Remember that the **psm.tsv** file contains all the PSM scored. Only a fraction of these PSM will be transfered to the **peptide.tsv** file. So, you may want to apply a filter in _hyperscore_ column to select the best PSMs.
 
-```
+```r
 psm_file <- read_tsv("psm.tsv") %>%
     janitor::clean_names() %>%
     dplyr::mutate(
@@ -69,7 +69,7 @@ psm_file <- read_tsv("psm.tsv") %>%
 
 Extract the matrix of amino acids and calculate the frequency of each residue in each position (from P4 to P4').
 
-```
+```r
 # create a list of peptide sequences including the N-term and C-term fingerprints
 fingerprint_protease <- c(psm_file$fingerprint_Nterm,
             psm_file$fingerprint_Cterm) %>% 
@@ -97,7 +97,7 @@ row.names(final_matrix) <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "
 
 Plotting the result and saving the heatmap. After running the code below, the png file should be saved in your working directory.
 
-```
+```r
 png("pics_plot_heatmap.png",
     width = 6, height = 6,
     units = "in", res = 300)
@@ -122,7 +122,7 @@ dev.off()
 Alternatively, you can plot using ggplot2.
 This gives you more control over the plot. Better for customization.
 
-```
+```r
 pics_plot <- final_matrix %>%
     as.data.frame() %>%
     rownames_to_column(var = "residue") %>%
@@ -165,14 +165,14 @@ ggsave("PICS_plot_ggplot.png",
 
 Additional packages you will need:
 
-```
+```r
 library(ggseqlogo)    # to create the seqLogos
 library(patchwork)    # to merge the figures in a nice panel
 ```
 
 Make the seqlogo for the N-termini and C-termini.
 
-```
+```r
 Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
     na.omit() %>%
     ggseqlogo::ggseqlogo(
@@ -230,7 +230,7 @@ ggsave("Cterm_seqLogo_plot.png",
 
 This panel plot will show the N-termini and the C-termini seqlogos separately and the composite of the N- and C-termini as a heatmap.
 
-```
+```r
 panel_plot <- (
     (
 (Nterm_seqLogo_plot | Cterm_seqLogo_plot) + plot_layout(guides = 'collect') & theme(legend.position = "bottom")
