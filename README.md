@@ -183,6 +183,8 @@ Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
         color = "black", linetype = "dashed") +
     geom_vline(xintercept = 4.5, 
         color = "black", linetype = "dashed") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8),
+                     labels = c("1" = "P4", "2" = "P3", "3" = "P2", "4" = "P1'", "6" = "P2'", "7" =  "P3'","8" = "P4'")) +
   theme_bw() +
   theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
     text = element_text(size = 15, color = "black"),
@@ -209,6 +211,8 @@ Cterm_seqLogo_plot <- psm_file$fingerprint_Cterm %>%
         color = "black", linetype = "dashed") +
     geom_vline(xintercept = 4.5, 
         color = "black", linetype = "dashed") +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8),
+                     labels = c("1" = "P4", "2" = "P3", "3" = "P2", "4" = "P1'", "6" = "P2'", "7" =  "P3'","8" = "P4'")) +
   theme_bw() +
   theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
     text = element_text(size = 15, color = "black"),
