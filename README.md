@@ -254,7 +254,7 @@ ggsave("panel_plot.png",
 
 Evaluate the peptide length distribution
 
-```{r}
+```r
 pept_length_plot <- psm_file %>%
   ggplot() +
   geom_histogram(aes(x = peptide_length),
