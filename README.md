@@ -184,7 +184,7 @@ Nterm_seqLogo_plot <- psm_file$fingerprint_Nterm %>%
     geom_vline(xintercept = 4.5, 
         color = "black", linetype = "dashed") +
   scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8),
-                     labels = c("1" = "P4", "2" = "P3", "3" = "P2", "4" = "P1'", "6" = "P2'", "7" =  "P3'","8" = "P4'")) +
+                     labels = c("1" = "P4", "2" = "P3", "3" = "P2", "4" = "P1", "5" = "P1'", "6" = "P2'", "7" =  "P3'", "8" = "P4'")) +
   theme_bw() +
   theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
     text = element_text(size = 15, color = "black"),
@@ -251,3 +251,30 @@ ggsave("panel_plot.png",
 <p align="center">
 <img src="https://github.com/41ison/Cleavage-site-specificity-analysis/blob/main/panel_plot_fingerprint.png" width="500">
 </p>
+
+Evaluate the peptide length distribution
+
+```{r}
+pept_length_plot <- psm_file %>%
+  ggplot() +
+  geom_histogram(aes(x = peptide_length),
+                 binwidth = 1, color = "black", fill = "tomato") +
+  labs(title = "Saline - 3 h",
+    x = "Peptide length (a.a.)",
+    y = "Count") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    text = element_text(size = 15, color = "black"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(color = "black", face = "bold"),
+    legend.position = "bottom",
+    legend.title.position = "top",
+    legend.title = element_text(size = 12, hjust = 0.5),
+    line = element_blank()
+  )
+
+ggsave("pept_length_plot.png", 
+    plot = pept_length_plot, 
+    width = 5, height = 5, bg = "white",
+    units = "in", dpi = 300)
+```
