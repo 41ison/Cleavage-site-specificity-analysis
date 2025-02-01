@@ -1,5 +1,10 @@
 # Protease cleavage site specificity analysis - PICS
 
+If you wanna to perform an in depth analysis with peptide annotation and good statistics for differential abundance of peptides, I recommend that you take a look at the [`TermineR` R library](https://github.com/MiguelCos/TermineR).
+
+You can find the [original publication](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.202300491?af=R) from `TermineR` as follows:
+> Cosenza-Contreras M, Seredynska A, Vogele D, Pinter N, Brombacher E, Cueto RF, Dinh TJ, Bernhard P, Rogg M, Liu J, Willems P, Stael S, Huesgen PF, Kuehn EW, Kreutz C, Schell C, Schilling O. TermineR: Extracting information on endogenous proteolytic processing from shotgun proteomics data. Proteomics. 2024 Oct;24(19):e2300491. doi: 10.1002/pmic.202300491. Epub 2024 Aug 10. PMID: 39126236.
+
 This is a small R code for cleavage site specificity analysis
 
 If you have any problems running the code you can check the following:
